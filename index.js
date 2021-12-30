@@ -7,7 +7,7 @@ const INDEX = '/index.html';
 
 const server = express()
 
-server.use((req, res) => res.sendFile(INDEX, { root: import.meta.url.replace(".js", ".html") }))
+server.use((req, res) => res.sendFile(INDEX, { root: "/app/file:/app/index.html" }))
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 const wss = new WebSocketServer({ port: 8080 });
