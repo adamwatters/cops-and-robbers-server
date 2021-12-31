@@ -1,19 +1,20 @@
 import  { WebSocketServer } from 'ws';
 import { v4 as uuidv4 } from 'uuid';
 import express from "express"
+import http from "http"
 
 const PORT = process.env.PORT || 3000;
 const INDEX = '/index.html';
 
-const server = express()
+const app = express()
+const httpServer = http.createServer(app)
 
-server.use((req, res) => res.sendFile(INDEX, { root: process.cwd() }))
-server.listen(PORT, () => console.log(`Listening on ${PORT}`));
+app.use((req, res) => res.sendFile(INDEX, { root: process.cwd() }))
 
-const wss = new WebSocketServer({ server });
+const wss = new WebSocketServer({ server: httpServer });
 
-let count = 0
 wss.on('connection', function connection(ws) {
+  console.log("someone connected")
   let id = uuidv4();
   ws.send(JSON.stringify({type: "handshake", id}));
   console.log("someone connected")
@@ -42,3 +43,5 @@ wss.on('connection', function connection(ws) {
   });
 
 });
+
+httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
