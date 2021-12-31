@@ -1,4 +1,4 @@
-import WebSocket, { WebSocketServer } from 'ws';
+import  { WebSocketServer } from 'ws';
 import { v4 as uuidv4 } from 'uuid';
 import express from "express"
 
@@ -10,7 +10,8 @@ const server = express()
 server.use((req, res) => res.sendFile(INDEX, { root: process.cwd() }))
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-const wss = new WebSocketServer({ port: 8080 });
+const wss = new WebSocketServer({ server });
+
 let count = 0
 wss.on('connection', function connection(ws) {
   let id = uuidv4();
