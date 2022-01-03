@@ -1,47 +1,82 @@
-import  { WebSocketServer, WebSocket } from 'ws';
-import { v4 as uuidv4 } from 'uuid';
-import express from "express"
-import http from "http"
-
-const PORT = process.env.PORT || 3000;
-const INDEX = '/index.html';
-
-const app = express()
-const httpServer = http.createServer(app)
-
-app.use((req, res) => res.sendFile(INDEX, { root: process.cwd() }))
-
-const wss = new WebSocketServer({ server: httpServer });
-
+"use strict";
+exports.__esModule = true;
+var ws_1 = require("ws");
+var uuid_1 = require("uuid");
+var express = require("express");
+var http = require("http");
+var Player = /** @class */ (function () {
+    function Player(id, handle, position) {
+        this.id = id;
+        this.handle = handle;
+        this.position = position;
+    }
+    return Player;
+}());
+var PORT = process.env.PORT || 3000;
+var app = express();
+var httpServer = http.createServer(app);
+app.use(express.static('dist'));
+var wss = new ws_1.WebSocketServer({ server: httpServer });
+var players = [];
+var positions = [0, 1, 2, 3, 4, 5];
+var connectionIDs = [];
+function sendIncludingSelf(sender, message) {
+    wss.clients.forEach(function each(client) {
+        if (client.readyState === ws_1.WebSocket.OPEN) {
+            client.send(JSON.stringify(message));
+        }
+    });
+}
+function sendExcludingSelf(sender, message) {
+    wss.clients.forEach(function each(client) {
+        if (client !== sender && client.readyState === ws_1.WebSocket.OPEN) {
+            client.send(JSON.stringify(message));
+        }
+    });
+}
 wss.on('connection', function connection(ws) {
-  console.log("someone connected")
-  let id = uuidv4();
-  ws.send(JSON.stringify({type: "handshake", id}));
-  console.log("someone connected")
-
-  ws.on('message', function message(data) {
-    let json = JSON.parse(data)
-    console.log(json)
-    if(json.type === "positionUpdate") {
-      wss.clients.forEach(function each(client) {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-          json.type = "enemyPosition"
-          console.log(JSON.stringify(json))
-          client.send(JSON.stringify(json));
+    var id = (0, uuid_1.v4)();
+    connectionIDs.push(id);
+    ws.send(JSON.stringify({
+        type: 'handshake',
+        id: id
+    }));
+    ws.on('close', function () {
+        var index = players.indexOf(id);
+        if (index > -1) {
+            players.splice(index, 1);
+            sendExcludingSelf(ws, {
+                type: 'playersUpdate',
+                players: players
+            });
         }
-      });
-    }
-    if(json.type === "directionUpdate") {
-      wss.clients.forEach(function each(client) {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-          json.type = "enemyDirection"
-          console.log(JSON.stringify(json))
-          client.send(JSON.stringify(json));
+    });
+    ws.on('message', function message(data) {
+        var json = JSON.parse(data);
+        console.log(json);
+        if (json.type === 'joinGame') {
+            if (positions.length > 0) {
+                var player = new Player(id, json.handle, positions.shift());
+                players.push(player);
+                sendIncludingSelf(ws, {
+                    type: 'playersUpdate',
+                    players: players
+                });
+            }
+            else {
+                ws.send(JSON.stringify({
+                    type: 'gameIsFull'
+                }));
+            }
         }
-      });
-    }
-  });
-
+        if (json.type === 'positionUpdate') {
+            json.type = 'enemyPosition';
+            sendExcludingSelf(ws, json);
+        }
+        if (json.type === 'directionUpdate') {
+            json.type = 'enemyDirection';
+            sendExcludingSelf(ws, json);
+        }
+    });
 });
-
-httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
+httpServer.listen(PORT, function () { return console.log("Listening on ".concat(PORT)); });
