@@ -3,9 +3,9 @@
     "version": "1.0.0",
     "description": "server for demo derby game",
     "engines": {
-        "node": "14.x"
+        "node": "16.x"
     },
-    "main": "index.js",
+    "main": "web-client/index.html",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "npm run build-client && npx tsc index.ts",
