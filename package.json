@@ -11,7 +11,7 @@
         "build-watch": "npx tsc index.ts --watch",
         "start": "npx nodemon index.js",
         "dev-client": "parcel web-client/index.html",
-        "build-client": "parcel build web-client/index.html "
+        "build-client": "parcel build web-client/index.html --no-scope-hoist"
     },
     "author": "",
     "license": "ISC",
