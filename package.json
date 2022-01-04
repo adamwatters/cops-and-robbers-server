@@ -5,14 +5,13 @@
     "engines": {
         "node": "16.x"
     },
-    "main": "web-client/index.html",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "npm run build-client && npx tsc index.ts",
         "build-watch": "npx tsc index.ts --watch",
         "start": "npx nodemon index.js",
         "dev-client": "parcel web-client/index.html",
-        "build-client": "parcel build web-client/index.html"
+        "build-client": "parcel build web-client/index.html "
     },
     "author": "",
     "license": "ISC",
