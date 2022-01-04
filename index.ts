@@ -5,11 +5,11 @@ import * as http from 'http'
 
 class Player {
     id: string
-    handle: string
+    playerName: string
     position: number
-    constructor(id, handle, position) {
+    constructor(id, playerName, position) {
         this.id = id
-        this.handle = handle
+        this.playerName = playerName
         this.position = position
     }
 }
@@ -68,7 +68,7 @@ wss.on('connection', function connection(ws) {
         console.log(json)
         if (json.type === 'joinGame') {
             if (positions.length > 0) {
-                let player = new Player(id, json.handle, positions.shift())
+                let player = new Player(id, json.playerName, positions.shift())
                 players.push(player)
                 sendIncludingSelf(ws, {
                     type: 'playersUpdate',

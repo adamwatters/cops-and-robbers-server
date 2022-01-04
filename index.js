@@ -5,9 +5,9 @@ var uuid_1 = require("uuid");
 var express = require("express");
 var http = require("http");
 var Player = /** @class */ (function () {
-    function Player(id, handle, position) {
+    function Player(id, playerName, position) {
         this.id = id;
-        this.handle = handle;
+        this.playerName = playerName;
         this.position = position;
     }
     return Player;
@@ -56,7 +56,7 @@ wss.on('connection', function connection(ws) {
         console.log(json);
         if (json.type === 'joinGame') {
             if (positions.length > 0) {
-                var player = new Player(id, json.handle, positions.shift());
+                var player = new Player(id, json.playerName, positions.shift());
                 players.push(player);
                 sendIncludingSelf(ws, {
                     type: 'playersUpdate',

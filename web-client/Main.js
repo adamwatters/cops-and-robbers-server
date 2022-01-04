@@ -37,7 +37,7 @@ function App({ ws }) {
                         socket.send(
                             JSON.stringify({
                                 type: 'joinGame',
-                                handle: inputValue,
+                                playerName: inputValue,
                             })
                         )
                     }
