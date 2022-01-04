@@ -65,7 +65,6 @@ wss.on('connection', function connection(ws) {
 
     ws.on('message', function message(data) {
         let json = JSON.parse(data as unknown as string)
-        console.log(json)
         if (json.type === 'joinGame') {
             if (positions.length > 0) {
                 let player = new Player(id, json.playerName, positions.shift())

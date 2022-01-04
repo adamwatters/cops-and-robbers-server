@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 function App({ ws }) {
     const [inputValue, setInputValue] = useState('')
-    const [events, setEvents] = useState([])
+    // const [events, setEvents] = useState([])
     const [socket, setSocket] = useState(null)
 
     useEffect(() => {
@@ -15,8 +15,8 @@ function App({ ws }) {
     useEffect(() => {
         if (socket != null) {
             socket.onmessage = (event) => {
-                console.log('Message from server ', event.data)
-                setEvents([event, ...events])
+                console.log(event)
+                // setEvents([event, ...events])
             }
         }
     }, [socket, events])
